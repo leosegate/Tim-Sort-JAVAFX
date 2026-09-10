@@ -1,0 +1,40 @@
+/* Styles ALL buttons globally in the scene */
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 5px;
+}
+
+/* Hover state (mouse over) */
+.button:hover {
+    -fx-background-color: #2980b9;
+    -fx-cursor: hand;
+}
+
+/* Pressed state (mouse click) */
+.button:pressed {
+    -fx-background-color: #1f618d;
+}
+
+/* Custom unique class style */
+.button-success {
+    -fx-background-color: #2ecc71;
+}
+
+.button-insertion1 {
+    -fx-background-color: #ff7600;
+}
+
+.button-insertion2 {
+    -fx-background-color: #3db800;
+}
+
+.button-selected {
+    -fx-background-color: #930000;
+}
+
+.button-selected2 {
+    -fx-background-color: #ac6060;
+}
