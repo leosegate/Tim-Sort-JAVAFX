@@ -17,6 +17,7 @@ public class Main extends Application {
     //AnchorPane pane;
     Thread thread;
     Button botao_inicio;
+    Button botaoFake;
     private Button vetorBotoes[];
 
     public static void main(String[] args) {
@@ -93,41 +94,51 @@ public class Main extends Application {
         return num;
     }
 
-    private void insertionSort(int comeco, int fim, String cor) {
-        insertionSortVisual(comeco, fim, comeco);
+    private void insertionSort(int comeco, int fim, int i) {
+        if(i == comeco) {
+            insertionSort(comeco, fim, i + 1);
+            return;
+        } else if (i < fim){
+            botaoFake.setText(vetorBotoes[i].getText());
+            botaoFake.setLayoutX(vetorBotoes[i].getLayoutX());
+            botaoFake.setStyle("-fx-background-color: #930000");
+            botaoFake.setVisible(true);
+
+            selecionarBotaoFake(() -> {
+                vetorBotoes[i].setVisible(false);
+                int temp = strToInt(vetorBotoes[i].getText());
+                insertionSortAndar(i, i - 1, temp, comeco, fim);
+                return;
+            });
+        }
     }
 
-    private void insertionSortVisual(int comeco, int fim, int i) {
-        // terminou o insertion sort
-        if(i >= fim) {
-            return;
-        }
-        int temp = strToInt(vetorBotoes[i].getText());
-        if(i == 0) {
-            insertionSortVisual(comeco, fim, i + 1);
-            return;
-        }
-        insertionPasso(comeco, fim, i, i - 1, temp);
-    }
+    private void insertionSortAndar(int i, int j, int temp, int comeco, int fim) {
+        if (j >= comeco && strToInt(vetorBotoes[j].getText()) > temp) {
+            int posicao = j;
+            double x = vetorBotoes[j].getLayoutX();
+            double y = vetorBotoes[j]. getLayoutY();
+            remanejar(j, () -> {
+                vetorBotoes[posicao + 1].setText(vetorBotoes[posicao].getText());
+                vetorBotoes[posicao].setVisible(false);
+                vetorBotoes[posicao].setLayoutX(x);
+                vetorBotoes[posicao].setLayoutY(y);
+                vetorBotoes[posicao + 1].setVisible(true);
+                insertionSortAndar(i, j - 1, temp, comeco, fim);
+            });
 
-    private void insertionPasso(int comeco, int fim, int i, int j, int temp) {
-        // encontrou a posição do elemento
-        if(j < 0 || strToInt(vetorBotoes[j].getText()) <= temp) {
-            vetorBotoes[j + 1].setText(temp + "");
-            // vai para o próximo elemento
-            insertionSortVisual(comeco, fim, i + 1);
-            return;
+        } else {
+            int destino = j + 1;
+            int distancia = i - destino;
+            inserirBotaoFake(distancia, () -> {
+                vetorBotoes[destino].setText(temp + "");
+                vetorBotoes[destino].setVisible(true);
+                vetorBotoes[i].setVisible(true);
+                vetorBotoes[i].setStyle("-fx-background-color: #cc922e");
+                botaoFake.setVisible(false);
+                insertionSort(comeco, fim, i + 1);
+            });
         }
-        // guarda o índice porque será usado dentro do Runnable
-        int posicao = j;
-        // anima UM movimento
-        move_botoes(posicao, posicao + 1, () -> {
-            vetorBotoes[posicao + 1].setText(
-                    vetorBotoes[posicao].getText()
-            );
-            // tenta fazer o próximo deslocamento
-            insertionPasso(comeco, fim, i, posicao - 1, temp);
-        });
     }
 
     private void mergeSort() {
@@ -135,8 +146,8 @@ public class Main extends Application {
     }
 
     private void timSort() {
-        insertionSort(0, 5, ".button-insertion1");
-       // insertionSort(6, 10, ".button-insertion2");
+        insertionSort(0, 5, 0);
+        //insertionSort(5, 10, 5);
 
     }
 
@@ -144,44 +155,81 @@ public class Main extends Application {
         botao_inicio = comecarOrdenacao();
         pane.getChildren().add(botao_inicio);
         vetorBotoes = gerarBotoes();
+        botaoFake = criaCaixa("", 100);
+        botaoFake.setVisible(false);
+        pane.getChildren().add(botaoFake);
     }
 
-    public void testeAnimacao(int j, Timeline animar) {
-        animar = new Timeline(
-                new KeyFrame(Duration.millis(50), event -> {
-                    vetorBotoes[j].setLayoutY(vetorBotoes[j].getLayoutY() + 5);
-                })
-        );
-        animar.setCycleCount(5);
-        animar.play();
-        animar.setOnFinished(event -> {
-            return;
-        });
+    public void remanejar(int k, Runnable depois) {
+        Task<Void> task = new Task<Void>(){
+            @Override
+            protected Void call() {
+                //permutação na tela
+                for (int i = 0; i < 16; i++) { // for pra jogar os numeros pro lado
+                    Platform.runLater(() -> vetorBotoes[k].setLayoutX(vetorBotoes[k].getLayoutX() + 5));
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Platform.runLater(depois);
+                return null;
+            }
+        };
+        thread = new Thread(task);
+        thread.start();
     }
 
-    public void primeiraEtapaAnimacao(int k, int j) {
-        Timeline subir = new Timeline(
-                new KeyFrame(Duration.millis(50), event -> {
-                    vetorBotoes[k].setLayoutY(vetorBotoes[k].getLayoutY() + 5);
-                    vetorBotoes[j].setLayoutY(vetorBotoes[j].getLayoutY() - 5);
-                })
-        );
-        subir.setCycleCount(5);
-        subir.play();
-        //subir.setOnFinished(event -> {
-        //    segundaEtapaAnimacao(k,j);
-        //});
+    public void selecionarBotaoFake(Runnable depois) {
+        Task<Void> task = new Task<Void>(){
+            @Override
+            protected Void call() {
+                //permutação na tela
+                for (int i = 0; i < 8; i++) { // for pra abaixar os numeros
+                    Platform.runLater(() -> botaoFake.setLayoutY(botaoFake.getLayoutY() - 5));
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Platform.runLater(depois);
+                return null;
+            }
+        };
+        thread = new Thread(task);
+        thread.start();
     }
-    
-    public void segundaEtapaAnimacao(int k, int j) {
-        Timeline subir = new Timeline(
-                new KeyFrame(Duration.millis(50), event -> {
-                    vetorBotoes[k].setLayoutX(vetorBotoes[k].getLayoutX() + 5);
-                    vetorBotoes[j].setLayoutX(vetorBotoes[j].getLayoutX() - 5);
-                })
-        );
-        subir.setCycleCount(16 * (k));
-        subir.play();
+
+    public void inserirBotaoFake(int distancia, Runnable depois) {
+
+        Task<Void> task = new Task<Void>(){
+            @Override
+            protected Void call() {
+                //permutação na tela
+                for (int i = 0; i < 16 * distancia; i++) { // for pra jogar os numeros pro lado
+                    Platform.runLater(() -> botaoFake.setLayoutX(botaoFake.getLayoutX() - 5));
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                for (int i = 0; i < 8; i++) { // for pra abaixar os numeros
+                    Platform.runLater(() -> botaoFake.setLayoutY(botaoFake.getLayoutY() + 5));
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Platform.runLater(depois);
+                return null;
+            }
+        };
+        thread = new Thread(task);
+        thread.start();
     }
 
     public void move_botoes(int k, int j, Runnable depois) {
@@ -216,10 +264,6 @@ public class Main extends Application {
                         e.printStackTrace();
                     }
                 }
-                //permutação na memória
-                /*Button aux = vetorBotoes[0];
-                vetorBotoes[0] = vetorBotoes[1];
-                vetorBotoes[1] = aux; */
                 Platform.runLater(depois);
                 return null;
             }
