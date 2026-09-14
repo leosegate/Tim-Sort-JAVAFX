@@ -18,6 +18,9 @@ public class Main extends Application {
     Thread thread;
     Button botao_inicio;
     Button botaoFake;
+    Button botaoFake2;
+    private boolean insertion1Terminou = false;
+    private boolean insertion2Terminou = false;
     private Button vetorBotoes[];
 
     public static void main(String[] args) {
@@ -70,6 +73,13 @@ public class Main extends Application {
         return button;
     }
 
+    private Button criarBotaoFake() {
+        Button botao = criaCaixa("", 100);
+        botao.setVisible(false);
+        pane.getChildren().add(botao);
+        return botao;
+    }
+
     private Button comecarOrdenacao() {
         Button button = new Button();
         button.setLayoutX(10);
@@ -94,9 +104,9 @@ public class Main extends Application {
         return num;
     }
 
-    private void insertionSort(int comeco, int fim, int i) {
+    private void insertionSort(int comeco, int fim, int i, Button botaoFake) {
         if(i == comeco) {
-            insertionSort(comeco, fim, i + 1);
+            insertionSort(comeco, fim, i + 1, botaoFake);
             return;
         } else if (i < fim){
             botaoFake.setText(vetorBotoes[i].getText());
@@ -104,16 +114,16 @@ public class Main extends Application {
             botaoFake.setStyle("-fx-background-color: #930000");
             botaoFake.setVisible(true);
 
-            selecionarBotaoFake(() -> {
+            selecionarBotaoFake(botaoFake, () -> {
                 vetorBotoes[i].setVisible(false);
                 int temp = strToInt(vetorBotoes[i].getText());
-                insertionSortAndar(i, i - 1, temp, comeco, fim);
+                insertionSortAndar(botaoFake, i, i - 1, temp, comeco, fim);
                 return;
             });
         }
     }
 
-    private void insertionSortAndar(int i, int j, int temp, int comeco, int fim) {
+    private void insertionSortAndar(Button botaoFake, int i, int j, int temp, int comeco, int fim) {
         if (j >= comeco && strToInt(vetorBotoes[j].getText()) > temp) {
             int posicao = j;
             double x = vetorBotoes[j].getLayoutX();
@@ -124,19 +134,19 @@ public class Main extends Application {
                 vetorBotoes[posicao].setLayoutX(x);
                 vetorBotoes[posicao].setLayoutY(y);
                 vetorBotoes[posicao + 1].setVisible(true);
-                insertionSortAndar(i, j - 1, temp, comeco, fim);
+                insertionSortAndar(botaoFake, i, j - 1, temp, comeco, fim);
             });
 
         } else {
             int destino = j + 1;
             int distancia = i - destino;
-            inserirBotaoFake(distancia, () -> {
+            inserirBotaoFake(botaoFake, distancia, () -> {
                 vetorBotoes[destino].setText(temp + "");
                 vetorBotoes[destino].setVisible(true);
                 vetorBotoes[i].setVisible(true);
                 vetorBotoes[i].setStyle("-fx-background-color: #cc922e");
                 botaoFake.setVisible(false);
-                insertionSort(comeco, fim, i + 1);
+                insertionSort(comeco, fim, i + 1, botaoFake);
             });
         }
     }
@@ -146,8 +156,8 @@ public class Main extends Application {
     }
 
     private void timSort() {
-        insertionSort(0, 5, 0);
-        //insertionSort(5, 10, 5);
+        insertionSort(0, 5, 0, botaoFake);
+        insertionSort(5, 10, 5, botaoFake2);
 
     }
 
@@ -155,9 +165,8 @@ public class Main extends Application {
         botao_inicio = comecarOrdenacao();
         pane.getChildren().add(botao_inicio);
         vetorBotoes = gerarBotoes();
-        botaoFake = criaCaixa("", 100);
-        botaoFake.setVisible(false);
-        pane.getChildren().add(botaoFake);
+        botaoFake = criarBotaoFake();
+        botaoFake2 = criarBotaoFake();
     }
 
     public void remanejar(int k, Runnable depois) {
@@ -181,7 +190,7 @@ public class Main extends Application {
         thread.start();
     }
 
-    public void selecionarBotaoFake(Runnable depois) {
+    public void selecionarBotaoFake(Button botaoFake ,Runnable depois) {
         Task<Void> task = new Task<Void>(){
             @Override
             protected Void call() {
@@ -202,7 +211,7 @@ public class Main extends Application {
         thread.start();
     }
 
-    public void inserirBotaoFake(int distancia, Runnable depois) {
+    public void inserirBotaoFake(Button botaoFake,int distancia, Runnable depois) {
 
         Task<Void> task = new Task<Void>(){
             @Override
