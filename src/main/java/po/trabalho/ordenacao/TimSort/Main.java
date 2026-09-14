@@ -22,6 +22,7 @@ public class Main extends Application {
     private boolean insertion1Terminou = false;
     private boolean insertion2Terminou = false;
     private Button vetorBotoes[];
+    private Button vetorBotoesOrganizados[];
 
     public static void main(String[] args) {
         launch(args);
@@ -62,6 +63,16 @@ public class Main extends Application {
         return buttons;
     }
 
+    private Button[] posicionarVetorTimSort() {
+        Button buttons[] = new Button[10];
+        int espacamento = 10;
+        for(int i = 0; i < 10; i++ , espacamento = espacamento + 80) {
+            buttons[i] = criaCaixaVetorTimSort(espacamento);
+            pane.getChildren().add(buttons[i]);
+        }
+        return buttons;
+    }
+
     private Button criaCaixa(String numero, int distancia) {
         Button button = new Button(numero);
         button.setLayoutX(distancia);
@@ -70,6 +81,18 @@ public class Main extends Application {
         button.setMinWidth(40);
         button.setFont(new Font(14));
         button.getStyleClass().add("button-success");
+        return button;
+    }
+
+    private Button criaCaixaVetorTimSort(int distancia) {
+        Button button = new Button();
+        button.setLayoutX(distancia);
+        button.setLayoutY(150);
+        button.setMinHeight(40);
+        button.setMinWidth(40);
+        button.setFont(new Font(14));
+        button.getStyleClass().add("button-success");
+        button.setVisible(false);
         return button;
     }
 
@@ -120,6 +143,13 @@ public class Main extends Application {
                 insertionSortAndar(botaoFake, i, i - 1, temp, comeco, fim);
                 return;
             });
+        } else {
+            if (botaoFake == this.botaoFake)
+                insertion1Terminou = true;
+            else if (botaoFake == this.botaoFake2) {
+                insertion2Terminou = true;
+            }
+            verificarInsertionSorts();
         }
     }
 
@@ -151,10 +181,41 @@ public class Main extends Application {
         }
     }
 
-    private void mergeSort() {
-
+    private void verificarInsertionSorts() {
+        if (insertion1Terminou && insertion2Terminou) {
+            mergeSort();
+        }
     }
 
+    private void mergeSort() {
+        System.out.println("merge pode comecar");
+        int i = 0, j = 5, k = 0;
+        while(i < 5 && j < 10) {
+            if(strToInt(vetorBotoes[i].getText()) > strToInt(vetorBotoes[j].getText())) {
+                vetorBotoesOrganizados[k].setText(vetorBotoes[j].getText());
+                vetorBotoesOrganizados[k].setVisible(true);
+                j++;
+            } else {
+                vetorBotoesOrganizados[k].setText(vetorBotoes[i].getText());
+                vetorBotoesOrganizados[k].setVisible(true);
+                i++;
+            }
+            k++;
+        }
+        if(i == 5) {
+            while(j < 10) {
+                vetorBotoesOrganizados[k].setText(vetorBotoes[j].getText());
+                vetorBotoesOrganizados[k].setVisible(true);
+                k++; j++;
+            }
+        } else while(i<5) {
+                vetorBotoesOrganizados[k].setText(vetorBotoes[i].getText());
+                vetorBotoesOrganizados[k].setVisible(false);
+                i++; k++;
+            }
+
+    }
+    
     private void timSort() {
         insertionSort(0, 5, 0, botaoFake);
         insertionSort(5, 10, 5, botaoFake2);
@@ -165,6 +226,7 @@ public class Main extends Application {
         botao_inicio = comecarOrdenacao();
         pane.getChildren().add(botao_inicio);
         vetorBotoes = gerarBotoes();
+        vetorBotoesOrganizados = posicionarVetorTimSort();
         botaoFake = criarBotaoFake();
         botaoFake2 = criarBotaoFake();
     }
