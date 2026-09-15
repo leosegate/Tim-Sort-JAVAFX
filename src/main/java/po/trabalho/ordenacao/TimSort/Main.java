@@ -7,14 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
-import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
-import javafx.util.Duration;
-
-import java.util.Objects;
 
 public class Main extends Application {
-    //AnchorPane pane;
     Thread thread;
     Button botao_inicio;
     Button botaoFake;
