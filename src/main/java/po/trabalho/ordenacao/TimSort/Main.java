@@ -19,6 +19,9 @@ public class Main extends Application {
     Button botao_inicio;
     Button botaoFake;
     Button botaoFake2;
+    private int mergeK = 0;
+    private int insertionI = 0;
+    private int insertionJ = 5;
     private boolean insertion1Terminou = false;
     private boolean insertion2Terminou = false;
     private Button vetorBotoes[];
@@ -87,7 +90,7 @@ public class Main extends Application {
     private Button criaCaixaVetorTimSort(int distancia) {
         Button button = new Button();
         button.setLayoutX(distancia);
-        button.setLayoutY(150);
+        button.setLayoutY(280);
         button.setMinHeight(40);
         button.setMinWidth(40);
         button.setFont(new Font(14));
@@ -189,33 +192,37 @@ public class Main extends Application {
 
     private void mergeSort() {
         System.out.println("merge pode comecar");
-        int i = 0, j = 5, k = 0;
-        while(i < 5 && j < 10) {
-            if(strToInt(vetorBotoes[i].getText()) > strToInt(vetorBotoes[j].getText())) {
-                vetorBotoesOrganizados[k].setText(vetorBotoes[j].getText());
-                vetorBotoesOrganizados[k].setVisible(true);
-                j++;
+        if(insertionI < 5 && insertionJ < 10) {
+            System.out.println("teste");
+            if(strToInt(vetorBotoes[insertionI].getText()) > strToInt(vetorBotoes[insertionJ].getText())) {
+                vetorBotoesOrganizados[mergeK].setText(vetorBotoes[insertionJ].getText());
+                mergeSortAnimacao(insertionJ, mergeK, true);
             } else {
-                vetorBotoesOrganizados[k].setText(vetorBotoes[i].getText());
-                vetorBotoesOrganizados[k].setVisible(true);
-                i++;
+                vetorBotoesOrganizados[mergeK].setText(vetorBotoes[insertionI].getText());
+                mergeSortAnimacao(insertionI, mergeK, false);
             }
-            k++;
-        }
-        if(i == 5) {
-            while(j < 10) {
-                vetorBotoesOrganizados[k].setText(vetorBotoes[j].getText());
-                vetorBotoesOrganizados[k].setVisible(true);
-                k++; j++;
+        } else if(insertionI == 5) {
+            if(insertionJ < 10) {
+                vetorBotoesOrganizados[mergeK].setText(vetorBotoes[insertionJ].getText());
+                mergeSortAnimacao(insertionJ, mergeK, true);
             }
-        } else while(i<5) {
-                vetorBotoesOrganizados[k].setText(vetorBotoes[i].getText());
-                vetorBotoesOrganizados[k].setVisible(false);
-                i++; k++;
+        } else if(insertionI<5) {
+                vetorBotoesOrganizados[mergeK].setText(vetorBotoes[insertionI].getText());
+                mergeSortAnimacao(insertionI, mergeK, false);
             }
-
     }
-    
+
+    private void mergeSortAnimacao(int i, int k, boolean veioDaDireita) {
+        inserirMergeSort(vetorBotoes[i], vetorBotoesOrganizados[k], () -> {
+            mergeK++;
+            if(veioDaDireita)
+                insertionJ++;
+            else
+                insertionI++;
+            mergeSort();
+        });
+    }
+
     private void timSort() {
         insertionSort(0, 5, 0, botaoFake);
         insertionSort(5, 10, 5, botaoFake2);
@@ -244,6 +251,68 @@ public class Main extends Application {
                         e.printStackTrace();
                     }
                 }
+                Platform.runLater(depois);
+                return null;
+            }
+        };
+        thread = new Thread(task);
+        thread.start();
+    }
+
+    public void inserirMergeSort(Button botaoInsertion, Button botaoMerge, Runnable depois) {
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() {
+                for (int x = 0; x < 16; x++) {
+                    Platform.runLater(() -> {
+                        botaoInsertion.setLayoutY(botaoInsertion.getLayoutY() + 5);
+                    });
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        return null;
+                    }
+                }
+
+                double xAtual = botaoInsertion.getLayoutX();
+                double xDestino = botaoMerge.getLayoutX();
+
+                if (xAtual < xDestino) {
+                    int distancia = (int) (xDestino - xAtual);
+                    for (int x = 0; x < distancia / 5; x++) {
+                        Platform.runLater(() -> {
+                            botaoInsertion.setLayoutX(botaoInsertion.getLayoutX() + 5);
+                        });
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            return null;
+                        }
+                    }
+
+                } else if (xAtual > xDestino) {
+                    int distancia = (int) (xAtual - xDestino);
+                    for (int x = 0; x < distancia / 5; x++) {
+                        Platform.runLater(() -> {
+                            botaoInsertion.setLayoutX(botaoInsertion.getLayoutX() - 5);
+                        });
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            return null;
+                        }
+                    }
+                }
+
+                Platform.runLater(() -> {
+                    botaoInsertion.setLayoutX(xDestino);
+                    botaoInsertion.setLayoutY(botaoMerge.getLayoutY());
+                    botaoInsertion.setVisible(false);
+                    botaoMerge.setVisible(true);
+                });
                 Platform.runLater(depois);
                 return null;
             }
