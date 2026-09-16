@@ -4,7 +4,9 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
 
@@ -18,6 +20,7 @@ public class Main extends Application {
     private int insertionJ = 5;
     private boolean insertion1Terminou = false;
     private boolean insertion2Terminou = false;
+    private Label[] linhasCodigo;
     private Button vetorBotoes[];
     private Button vetorBotoesOrganizados[];
 
@@ -73,7 +76,7 @@ public class Main extends Application {
     private Button criaCaixa(String numero, int distancia) {
         Button button = new Button(numero);
         button.setLayoutX(distancia);
-        button.setLayoutY(200);
+        button.setLayoutY(50);
         button.setMinHeight(40);
         button.setMinWidth(40);
         button.setFont(new Font(14));
@@ -84,7 +87,7 @@ public class Main extends Application {
     private Button criaCaixaVetorTimSort(int distancia) {
         Button button = new Button();
         button.setLayoutX(distancia);
-        button.setLayoutY(280);
+        button.setLayoutY(130);
         button.setMinHeight(40);
         button.setMinWidth(40);
         button.setFont(new Font(14));
@@ -102,11 +105,10 @@ public class Main extends Application {
 
     private Button comecarOrdenacao() {
         Button button = new Button();
-        button.setLayoutX(10);
-        button.setLayoutY(100);
-        button.setText("Inicia...");
+        button.setLayoutX(1);
+        button.setLayoutY(300);
+        button.setText("Iniciar Tim Sort");
         button.setOnAction(e -> {
-            //move_botoes();
             timSort();
         });
         return button;
@@ -125,10 +127,12 @@ public class Main extends Application {
     }
 
     private void insertionSort(int comeco, int fim, int i, Button botaoFake) {
+        linhaSelecionada(linhasCodigo[0]);
         if(i == comeco) {
             insertionSort(comeco, fim, i + 1, botaoFake);
             return;
         } else if (i < fim){
+            linhaNormal(linhasCodigo[0]);
             botaoFake.setText(vetorBotoes[i].getText());
             botaoFake.setLayoutX(vetorBotoes[i].getLayoutX());
             botaoFake.setStyle("-fx-background-color: #930000");
@@ -137,6 +141,8 @@ public class Main extends Application {
             selecionarBotaoFake(botaoFake, () -> {
                 vetorBotoes[i].setVisible(false);
                 int temp = strToInt(vetorBotoes[i].getText());
+                linhaSelecionada(linhasCodigo[1]);
+                linhaNormal(linhasCodigo[0]);
                 insertionSortAndar(botaoFake, i, i - 1, temp, comeco, fim);
                 return;
             });
@@ -151,7 +157,9 @@ public class Main extends Application {
     }
 
     private void insertionSortAndar(Button botaoFake, int i, int j, int temp, int comeco, int fim) {
+        linhaNormal(linhasCodigo[1]);
         if (j >= comeco && strToInt(vetorBotoes[j].getText()) > temp) {
+            linhaSelecionada(linhasCodigo[2]);
             int posicao = j;
             double x = vetorBotoes[j].getLayoutX();
             double y = vetorBotoes[j]. getLayoutY();
@@ -167,7 +175,7 @@ public class Main extends Application {
         } else {
             int destino = j + 1;
             int distancia = i - destino;
-            inserirBotaoFake(botaoFake, distancia, () -> {
+                inserirBotaoFake(botaoFake, distancia, () -> {
                 vetorBotoes[destino].setText(temp + "");
                 vetorBotoes[destino].setVisible(true);
                 vetorBotoes[i].setVisible(true);
@@ -219,7 +227,7 @@ public class Main extends Application {
 
     private void timSort() {
         insertionSort(0, 5, 0, botaoFake);
-        insertionSort(5, 10, 5, botaoFake2);
+        //insertionSort(5, 10, 5, botaoFake2);
 
     }
 
@@ -230,6 +238,48 @@ public class Main extends Application {
         vetorBotoesOrganizados = posicionarVetorTimSort();
         botaoFake = criarBotaoFake();
         botaoFake2 = criarBotaoFake();
+        VBox linhas = organizarLinhas();
+        linhas.getStyleClass().add("box-insertionsort");
+        linhas.setLayoutY(350);
+        pane.getChildren().add(linhas);
+    }
+
+    private Label criarLinhaCodigo(String text) {
+        Label linha = new Label(text);
+        linhaNormal(linha);
+        return linha;
+    }
+
+    private void linhaSelecionada(Label linha) {
+        linha.getStyleClass().remove("linha-normal");
+        linha.getStyleClass().add("linha-selecionada");
+    }
+
+    private void linhaNormal(Label linha) {
+        linha.getStyleClass().remove("linha-selecionada");
+        linha.getStyleClass().add("linha-normal");
+    }
+
+    private void setLinhasCodigo() {
+        linhasCodigo = new Label[10];
+        linhasCodigo[0] = criarLinhaCodigo("for (int i = comeco + 1; i < fim; i++) {");
+        linhasCodigo[1] = criarLinhaCodigo("    int temp = vetor[i];");
+        linhasCodigo[2] = criarLinhaCodigo("    int j = i - 1;");
+        linhasCodigo[3] = criarLinhaCodigo("    while (j >= comeco && vetor[j] > temp) {");
+        linhasCodigo[4] = criarLinhaCodigo("        vetor[j + 1] = vetor[j];");
+        linhasCodigo[5] = criarLinhaCodigo("        j--;");
+        linhasCodigo[6] = criarLinhaCodigo("    }");
+        linhasCodigo[7] = criarLinhaCodigo("    j++;");
+        linhasCodigo[8] = criarLinhaCodigo("    j = temp");
+        linhasCodigo[9] = criarLinhaCodigo("}");
+    }
+
+    private VBox organizarLinhas() {
+        VBox linhas = new VBox();
+        setLinhasCodigo();
+        for (Label linha : linhasCodigo)
+            linhas.getChildren().add(linha);
+        return linhas;
     }
 
     public void remanejar(int k, Runnable depois) {
@@ -237,7 +287,16 @@ public class Main extends Application {
             @Override
             protected Void call() {
                 //permutação na tela
-                for (int i = 0; i < 16; i++) { // for pra jogar os numeros pro lado
+                linhaNormal(linhasCodigo[2]);
+                linhaSelecionada(linhasCodigo[3]);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                linhaNormal(linhasCodigo[3]);
+                linhaSelecionada(linhasCodigo[4]);
+                for (int i = 0; i < 16; i++) {// for pra jogar os numeros pro lado
                     Platform.runLater(() -> vetorBotoes[k].setLayoutX(vetorBotoes[k].getLayoutX() + 5));
                     try {
                         Thread.sleep(50);
@@ -245,6 +304,14 @@ public class Main extends Application {
                         e.printStackTrace();
                     }
                 }
+                linhaNormal(linhasCodigo[4]);
+                linhaSelecionada(linhasCodigo[5]);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                linhaNormal(linhasCodigo[5]);
                 Platform.runLater(depois);
                 return null;
             }
@@ -342,6 +409,14 @@ public class Main extends Application {
             @Override
             protected Void call() {
                 //permutação na tela
+                linhaSelecionada(linhasCodigo[7]);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                linhaNormal(linhasCodigo[7]);
+                linhaSelecionada(linhasCodigo[8]);
                 for (int i = 0; i < 16 * distancia; i++) { // for pra jogar os numeros pro lado
                     Platform.runLater(() -> botaoFake.setLayoutX(botaoFake.getLayoutX() - 5));
                     try {
@@ -358,6 +433,7 @@ public class Main extends Application {
                         e.printStackTrace();
                     }
                 }
+                linhaNormal(linhasCodigo[8]);
                 Platform.runLater(depois);
                 return null;
             }

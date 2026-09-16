@@ -38,3 +38,21 @@
 .button-selected2 {
     -fx-background-color: #ac6060;
 }
+
+.box-insertionsort {
+    -fx-background-color: black;
+}
+
+.terminal {
+    -fx-font-family: "Monospaced";
+    -fx-font-size: 15px;
+    -fx-font-style: normal;
+}
+
+.linha-normal {
+    -fx-text-fill: white;
+}
+
+.linha-selecionada {
+    -fx-text-fill: #ff5483;
+}
