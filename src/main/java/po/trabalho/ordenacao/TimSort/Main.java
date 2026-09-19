@@ -196,28 +196,37 @@ public class Main extends Application {
 
     private void mergeSort() {
         System.out.println("merge pode comecar");
+        linhaSelecionada(linhasCodigoMerge[0]);
         if(insertionI < 5 && insertionJ < 10) {
             System.out.println("teste");
+            linhaNormal(linhasCodigoMerge[0]);
+            linhaSelecionada(linhasCodigoMerge[1]);
             if(strToInt(vetorBotoes[insertionI].getText()) > strToInt(vetorBotoes[insertionJ].getText())) {
                 vetorBotoesOrganizados[mergeK].setText(vetorBotoes[insertionJ].getText());
-                mergeSortAnimacao(insertionJ, mergeK, true);
+                mergeSortAnimacao(insertionJ, mergeK, 0,true);
             } else {
                 vetorBotoesOrganizados[mergeK].setText(vetorBotoes[insertionI].getText());
-                mergeSortAnimacao(insertionI, mergeK, false);
+                mergeSortAnimacao(insertionI, mergeK, 0,false);
             }
         } else if(insertionI == 5) {
+            linhaNormal(linhasCodigoMerge[0]);
+            linhaSelecionada(linhasCodigoMerge[9]);
             if(insertionJ < 10) {
+                linhaNormal(linhasCodigoMerge[9]);
+                linhaSelecionada(linhasCodigoMerge[10]);
                 vetorBotoesOrganizados[mergeK].setText(vetorBotoes[insertionJ].getText());
-                mergeSortAnimacao(insertionJ, mergeK, true);
+                mergeSortAnimacao(insertionJ, mergeK, 10,true);
             }
         } else if(insertionI<5) {
+                linhaSelecionada(linhasCodigoMerge[15]);
                 vetorBotoesOrganizados[mergeK].setText(vetorBotoes[insertionI].getText());
-                mergeSortAnimacao(insertionI, mergeK, false);
+                mergeSortAnimacao(insertionI, mergeK, 15,false);
             }
+        linhaNormal(linhasCodigoMerge[0]);
     }
 
-    private void mergeSortAnimacao(int i, int k, boolean veioDaDireita) {
-        inserirMergeSort(vetorBotoes[i], vetorBotoesOrganizados[k], () -> {
+    private void mergeSortAnimacao(int i, int k, int linhaWhile, boolean veioDaDireita) {
+        inserirMergeSort(vetorBotoes[i], vetorBotoesOrganizados[k], linhaWhile,veioDaDireita,() -> {
             mergeK++;
             if(veioDaDireita)
                 insertionJ++;
@@ -229,8 +238,6 @@ public class Main extends Application {
 
     private void timSort() {
         insertionSort(0, 5, 0, botaoFake);
-        //insertionSort(5, 10, 5, botaoFake2);
-
     }
 
     private void IniciarPane() {
@@ -240,6 +247,7 @@ public class Main extends Application {
         vetorBotoesOrganizados = posicionarVetorTimSort();
         botaoFake = criarBotaoFake();
         botaoFake2 = criarBotaoFake();
+
         setLinhasCodigoInsertion();
         VBox linhasInsertion = organizarLinhas(linhasCodigoInsertion);
         linhasInsertion.getStyleClass().add("box-insertionsort");
@@ -354,10 +362,20 @@ public class Main extends Application {
         thread.start();
     }
 
-    public void inserirMergeSort(Button botaoInsertion, Button botaoMerge, Runnable depois) {
+    public void inserirMergeSort(Button botaoInsertion, Button botaoMerge, int linhaWhile,boolean veioDaDireita,Runnable depois) {
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() {
+                if(veioDaDireita && linhaWhile == 0)
+                    linhaSelecionada(linhasCodigoMerge[2]);
+                else
+                    linhaSelecionada(linhasCodigoMerge[5]);
+
+                if(linhaWhile == 10)
+                    linhaSelecionada(linhasCodigoMerge[11]);
+                if(linhaWhile == 15)
+                    linhaSelecionada(linhasCodigoMerge[16]);
+
                 for (int x = 0; x < 16; x++) {
                     Platform.runLater(() -> {
                         botaoInsertion.setLayoutY(botaoInsertion.getLayoutY() + 5);
@@ -401,6 +419,13 @@ public class Main extends Application {
                         }
                     }
                 }
+
+                linhaNormal(linhasCodigoMerge[2]);
+                linhaNormal(linhasCodigoMerge[5]);
+                linhaNormal(linhasCodigoMerge[11]);
+                linhaNormal(linhasCodigoMerge[16]);
+                linhaNormal(linhasCodigoMerge[0]);
+                linhaNormal(linhasCodigoMerge[1]);
 
                 Platform.runLater(() -> {
                     botaoInsertion.setLayoutX(xDestino);
