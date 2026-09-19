@@ -20,7 +20,8 @@ public class Main extends Application {
     private int insertionJ = 5;
     private boolean insertion1Terminou = false;
     private boolean insertion2Terminou = false;
-    private Label[] linhasCodigo;
+    private Label[] linhasCodigoInsertion;
+    private Label[] linhasCodigoMerge;
     private Button vetorBotoes[];
     private Button vetorBotoesOrganizados[];
 
@@ -127,12 +128,12 @@ public class Main extends Application {
     }
 
     private void insertionSort(int comeco, int fim, int i, Button botaoFake) {
-        linhaSelecionada(linhasCodigo[0]);
+        linhaSelecionada(linhasCodigoInsertion[0]);
         if(i == comeco) {
             insertionSort(comeco, fim, i + 1, botaoFake);
             return;
         } else if (i < fim){
-            linhaNormal(linhasCodigo[0]);
+            linhaNormal(linhasCodigoInsertion[0]);
             botaoFake.setText(vetorBotoes[i].getText());
             botaoFake.setLayoutX(vetorBotoes[i].getLayoutX());
             botaoFake.setStyle("-fx-background-color: #930000");
@@ -141,15 +142,16 @@ public class Main extends Application {
             selecionarBotaoFake(botaoFake, () -> {
                 vetorBotoes[i].setVisible(false);
                 int temp = strToInt(vetorBotoes[i].getText());
-                linhaSelecionada(linhasCodigo[1]);
-                linhaNormal(linhasCodigo[0]);
+                linhaSelecionada(linhasCodigoInsertion[1]);
+                linhaNormal(linhasCodigoInsertion[0]);
                 insertionSortAndar(botaoFake, i, i - 1, temp, comeco, fim);
                 return;
             });
         } else {
-            if (botaoFake == this.botaoFake)
+            if (botaoFake == this.botaoFake) {
                 insertion1Terminou = true;
-            else if (botaoFake == this.botaoFake2) {
+                insertionSort(5, 10, 5, botaoFake2);
+            } else if (botaoFake == this.botaoFake2) {
                 insertion2Terminou = true;
             }
             verificarInsertionSorts();
@@ -157,9 +159,9 @@ public class Main extends Application {
     }
 
     private void insertionSortAndar(Button botaoFake, int i, int j, int temp, int comeco, int fim) {
-        linhaNormal(linhasCodigo[1]);
+        linhaNormal(linhasCodigoInsertion[1]);
         if (j >= comeco && strToInt(vetorBotoes[j].getText()) > temp) {
-            linhaSelecionada(linhasCodigo[2]);
+            linhaSelecionada(linhasCodigoInsertion[2]);
             int posicao = j;
             double x = vetorBotoes[j].getLayoutX();
             double y = vetorBotoes[j]. getLayoutY();
@@ -238,10 +240,18 @@ public class Main extends Application {
         vetorBotoesOrganizados = posicionarVetorTimSort();
         botaoFake = criarBotaoFake();
         botaoFake2 = criarBotaoFake();
-        VBox linhas = organizarLinhas();
-        linhas.getStyleClass().add("box-insertionsort");
-        linhas.setLayoutY(350);
-        pane.getChildren().add(linhas);
+        setLinhasCodigoInsertion();
+        VBox linhasInsertion = organizarLinhas(linhasCodigoInsertion);
+        linhasInsertion.getStyleClass().add("box-insertionsort");
+        linhasInsertion.setLayoutY(350);
+        pane.getChildren().add(linhasInsertion);
+
+        setLinhasCodigoMerge();
+        VBox linhasMerge = organizarLinhas(linhasCodigoMerge);
+        linhasMerge.getStyleClass().add("box-insertionsort");
+        linhasMerge.setLayoutY(250);
+        linhasMerge.setLayoutX(400);
+        pane.getChildren().add(linhasMerge);
     }
 
     private Label criarLinhaCodigo(String text) {
@@ -260,23 +270,47 @@ public class Main extends Application {
         linha.getStyleClass().add("linha-normal");
     }
 
-    private void setLinhasCodigo() {
-        linhasCodigo = new Label[10];
-        linhasCodigo[0] = criarLinhaCodigo("for (int i = comeco + 1; i < fim; i++) {");
-        linhasCodigo[1] = criarLinhaCodigo("    int temp = vetor[i];");
-        linhasCodigo[2] = criarLinhaCodigo("    int j = i - 1;");
-        linhasCodigo[3] = criarLinhaCodigo("    while (j >= comeco && vetor[j] > temp) {");
-        linhasCodigo[4] = criarLinhaCodigo("        vetor[j + 1] = vetor[j];");
-        linhasCodigo[5] = criarLinhaCodigo("        j--;");
-        linhasCodigo[6] = criarLinhaCodigo("    }");
-        linhasCodigo[7] = criarLinhaCodigo("    j++;");
-        linhasCodigo[8] = criarLinhaCodigo("    j = temp");
-        linhasCodigo[9] = criarLinhaCodigo("}");
+    private void setLinhasCodigoInsertion() {
+        linhasCodigoInsertion = new Label[10];
+        linhasCodigoInsertion[0] = criarLinhaCodigo("for (int i = comeco + 1; i < fim; i++) {");
+        linhasCodigoInsertion[1] = criarLinhaCodigo("    int temp = vetor[i];");
+        linhasCodigoInsertion[2] = criarLinhaCodigo("    int j = i - 1;");
+        linhasCodigoInsertion[3] = criarLinhaCodigo("    while (j >= comeco && vetor[j] > temp) {");
+        linhasCodigoInsertion[4] = criarLinhaCodigo("        vetor[j + 1] = vetor[j];");
+        linhasCodigoInsertion[5] = criarLinhaCodigo("        j--;");
+        linhasCodigoInsertion[6] = criarLinhaCodigo("    }");
+        linhasCodigoInsertion[7] = criarLinhaCodigo("    j++;");
+        linhasCodigoInsertion[8] = criarLinhaCodigo("    j = temp");
+        linhasCodigoInsertion[9] = criarLinhaCodigo("}");
     }
 
-    private VBox organizarLinhas() {
+    private void setLinhasCodigoMerge() {
+        linhasCodigoMerge = new Label[20];
+        linhasCodigoMerge[0] = criarLinhaCodigo("while(i < 5 && j < 10) {");
+        linhasCodigoMerge[1] = criarLinhaCodigo("    if(insertion[i] > insertion[j]) {");
+        linhasCodigoMerge[2] = criarLinhaCodigo("        merge[k] = insertion[j];");
+        linhasCodigoMerge[3] = criarLinhaCodigo("        j++;");
+        linhasCodigoMerge[4] = criarLinhaCodigo("    } else {");
+        linhasCodigoMerge[5] = criarLinhaCodigo("        merge[k] = insertion[i];");
+        linhasCodigoMerge[6] = criarLinhaCodigo("        i++;");
+        linhasCodigoMerge[7] = criarLinhaCodigo("    }");
+        linhasCodigoMerge[8] = criarLinhaCodigo("}");
+        linhasCodigoMerge[9] = criarLinhaCodigo("if(i == 5) {");
+        linhasCodigoMerge[10] = criarLinhaCodigo("    while(j < 10) {");
+        linhasCodigoMerge[11] = criarLinhaCodigo("        merge[k] = insertion[j];");
+        linhasCodigoMerge[12] = criarLinhaCodigo("        j++;");
+        linhasCodigoMerge[13] = criarLinhaCodigo("    }");
+        linhasCodigoMerge[14] = criarLinhaCodigo("} else if(i < 5) {");
+        linhasCodigoMerge[15] = criarLinhaCodigo("    while(i < 5) {");
+        linhasCodigoMerge[16] = criarLinhaCodigo("        merge[k] = insertion[i];");
+        linhasCodigoMerge[17] = criarLinhaCodigo("        i++;");
+        linhasCodigoMerge[18] = criarLinhaCodigo("    }");
+        linhasCodigoMerge[19] = criarLinhaCodigo("}");
+    }
+
+    private VBox organizarLinhas(Label[] linhasCodigo) {
         VBox linhas = new VBox();
-        setLinhasCodigo();
+
         for (Label linha : linhasCodigo)
             linhas.getChildren().add(linha);
         return linhas;
@@ -287,15 +321,15 @@ public class Main extends Application {
             @Override
             protected Void call() {
                 //permutação na tela
-                linhaNormal(linhasCodigo[2]);
-                linhaSelecionada(linhasCodigo[3]);
+                linhaNormal(linhasCodigoInsertion[2]);
+                linhaSelecionada(linhasCodigoInsertion[3]);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                linhaNormal(linhasCodigo[3]);
-                linhaSelecionada(linhasCodigo[4]);
+                linhaNormal(linhasCodigoInsertion[3]);
+                linhaSelecionada(linhasCodigoInsertion[4]);
                 for (int i = 0; i < 16; i++) {// for pra jogar os numeros pro lado
                     Platform.runLater(() -> vetorBotoes[k].setLayoutX(vetorBotoes[k].getLayoutX() + 5));
                     try {
@@ -304,14 +338,14 @@ public class Main extends Application {
                         e.printStackTrace();
                     }
                 }
-                linhaNormal(linhasCodigo[4]);
-                linhaSelecionada(linhasCodigo[5]);
+                linhaNormal(linhasCodigoInsertion[4]);
+                linhaSelecionada(linhasCodigoInsertion[5]);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                linhaNormal(linhasCodigo[5]);
+                linhaNormal(linhasCodigoInsertion[5]);
                 Platform.runLater(depois);
                 return null;
             }
@@ -409,14 +443,14 @@ public class Main extends Application {
             @Override
             protected Void call() {
                 //permutação na tela
-                linhaSelecionada(linhasCodigo[7]);
+                linhaSelecionada(linhasCodigoInsertion[7]);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                linhaNormal(linhasCodigo[7]);
-                linhaSelecionada(linhasCodigo[8]);
+                linhaNormal(linhasCodigoInsertion[7]);
+                linhaSelecionada(linhasCodigoInsertion[8]);
                 for (int i = 0; i < 16 * distancia; i++) { // for pra jogar os numeros pro lado
                     Platform.runLater(() -> botaoFake.setLayoutX(botaoFake.getLayoutX() - 5));
                     try {
@@ -433,7 +467,7 @@ public class Main extends Application {
                         e.printStackTrace();
                     }
                 }
-                linhaNormal(linhasCodigo[8]);
+                linhaNormal(linhasCodigoInsertion[8]);
                 Platform.runLater(depois);
                 return null;
             }
